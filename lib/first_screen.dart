@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'theme_manager.dart';
+import 'theme_manager/theme_manager.dart';
 import 'package:provider/provider.dart';
+import 'second_screen.dart';
 
 const String mainScreen = "assets/main_screen.jpg";
 
@@ -31,17 +32,43 @@ class FirstScreen extends StatelessWidget {
         ],
       ),
       body: Center(
-        child: GestureDetector(
-          onTap: () {
-            Navigator.pushNamed(context, '/second');
-          },
-          child: SizedBox(
-            width: 500,
-            height: 700,
-            child: Image.asset(
-              mainScreen,
-              fit: BoxFit.fill,
-            ),
+        child: GridView.builder(
+          itemCount: workersCats.length,
+          itemBuilder: (context, index) => ImageViewer(index),
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 3,
+            crossAxisSpacing: 10,
+            mainAxisSpacing: 10,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class ImageViewer extends StatelessWidget {
+  final int imageIndex;
+
+  const ImageViewer(this.imageIndex);
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => SecondScreen(initialIndex: imageIndex),
+          ),
+        );
+      },
+      child: Container(
+        height: 200,
+        width: 200,
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage(workersCats[imageIndex]),
+            fit: BoxFit.cover,
           ),
         ),
       ),

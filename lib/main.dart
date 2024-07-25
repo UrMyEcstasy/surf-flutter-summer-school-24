@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'theme_manager.dart';
+import 'theme_manager/theme_manager.dart';
+import 'package:provider/provider.dart';
 import 'first_screen.dart';
 import 'second_screen.dart';
-import 'package:provider/provider.dart';
 
 void main() {
   runApp(
@@ -25,7 +25,17 @@ class MyApp extends StatelessWidget {
           initialRoute: '/',
           routes: {
             '/': (BuildContext context) => FirstScreen(),
-            '/second': (BuildContext context) => const SecondScreen(),
+          },
+          onGenerateRoute: (settings) {
+            if (settings.name == '/second') {
+              final int index = settings.arguments as int;
+              return MaterialPageRoute(
+                builder: (context) {
+                  return SecondScreen(initialIndex: index);
+                },
+              );
+            }
+            return null;
           },
         );
       },
