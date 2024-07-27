@@ -1,13 +1,27 @@
 import 'package:flutter/material.dart';
-import 'theme_manager/theme_manager.dart';
 import 'package:provider/provider.dart';
-import 'first_screen.dart';
-import 'second_screen.dart';
+import 'feature/theme/domain/theme_controller.dart';
+import 'feature/theme/di/theme_inherited.dart';
+import 'screen_wiew/first_screen.dart';
+import 'photo/pagewiew/photo_controller.dart';
+import 'feature/theme/data/theme_repository.dart';
+import 'storage/theme/theme_storage.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  final prefs = await SharedPreferences.getInstance();
+  final themeStorage = ThemeStorage(prefs: prefs);
+  final themeRepository = ThemeRepository(themeStorage: themeStorage);
+  final themeController = ThemeController(themeRepository: themeRepository);
+
   runApp(
-    ChangeNotifierProvider(
-      create: (_) => ThemeManager(),
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => PhotoController()),
+        ChangeNotifierProvider(create: (_) => themeController), // Добавляем ThemeController
+      ],
       child: MyApp(),
     ),
   );
@@ -16,27 +30,16 @@ void main() {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Consumer<ThemeManager>(
-      builder: (context, themeManager, child) {
-        return MaterialApp(
-          theme: ThemeData.light(),
-          darkTheme: ThemeData.dark(),
-          themeMode: themeManager.themeMode,
-          initialRoute: '/',
-          routes: {
-            '/': (BuildContext context) => FirstScreen(),
-          },
-          onGenerateRoute: (settings) {
-            if (settings.name == '/second') {
-              final int index = settings.arguments as int;
-              return MaterialPageRoute(
-                builder: (context) {
-                  return SecondScreen(initialIndex: index);
-                },
-              );
-            }
-            return null;
-          },
+    return Consumer<ThemeController>(
+      builder: (context, themeController, child) {
+        return ThemeInherited(
+          themeController: themeController,
+          child: MaterialApp(
+            theme: ThemeData.light(),
+            darkTheme: ThemeData.dark(),
+            themeMode: themeController.themeMode.value,
+            home: FirstScreen(),
+          ),
         );
       },
     );

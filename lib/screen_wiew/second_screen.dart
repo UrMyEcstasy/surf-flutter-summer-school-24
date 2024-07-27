@@ -1,41 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-final List<String> workersCats = [
-  "assets/barmen_cat.jpg",
-  "assets/fitness_cat.jpg",
-  "assets/farmer_cat.jpg",
-  "assets/plumber_cat.jpg",
-  "assets/killer_cat.jpg",
-  "assets/football_cat.jpg",
-  "assets/journalist_cat.jpg",
-  "assets/mafia_cat.jpg",
-  "assets/stuard_cat.jpg",
-  "assets/tractor_cat.jpg",
-  "assets/ballet_cat.jpg",
-  "assets/builder_cat.jpg",
-  "assets/scientist_cat.jpg",
-  "assets/programmer_cat.jpg",
-  "assets/fireman_cat.jpg",
-  "assets/soilder_cat.jpg",
-  "assets/shop_cat.jpg",
-  "assets/enginneer_cat.jpg",
-  "assets/painter_cat.jpg",
-  "assets/office_cat.jpg",
-  "assets/doctor_cat.jpg",
-  "assets/sailor_cat.jpg",
-  "assets/teacher_cat.jpg",
-  "assets/cooker_cat.jpg",
-  "assets/florist_cat.jpg",
-  "assets/air_cat.jpg",
-  "assets/courier_cat.jpg",
-  "assets/jobless_cat.jpg",
-  "assets/space_cat.jpg",
-  "assets/security_cat.jpg",
-];
+const List<String> workersCats = [
+
+  ];
 
 class SecondScreen extends StatefulWidget {
   final int initialIndex;
+
   const SecondScreen({super.key, required this.initialIndex});
 
   @override
@@ -125,6 +97,7 @@ class _SecondScreenState extends State<SecondScreen> {
 
 class _PageViewItem extends StatelessWidget {
   final String image;
+
   const _PageViewItem({
     required this.image,
     super.key,
