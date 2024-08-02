@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
 
-final class PhotoObject extends Equatable {
+class PhotoObject extends Equatable {
   final String url;
   final DateTime? createdAt;
 
@@ -10,8 +10,5 @@ final class PhotoObject extends Equatable {
   });
 
   @override
-  List<Object?> get props => [
-    url,
-    createdAt,
-  ];
+  List<Object?> get props => [url, createdAt];
 }

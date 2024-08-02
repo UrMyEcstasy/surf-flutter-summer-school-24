@@ -2,7 +2,7 @@ import 'photo_object.dart';
 
 class PhotoRepository {
   static final PhotoRepository _singleton = PhotoRepository._internal();
-  List<PhotoObject>? _photos = null;
+  List<PhotoObject> _photos = [];
 
   factory PhotoRepository() {
     return _singleton;
@@ -10,21 +10,13 @@ class PhotoRepository {
 
   PhotoRepository._internal();
 
-  void addPhotos(List<String> urls) async {
-    for(int i = 0; i < urls.length; i++) {
-      if(_photos == null)
-      {
-        List<PhotoObject> newList = <PhotoObject>[];
-        newList.add(PhotoObject(url: urls[i]));
-        _photos = newList;
-      }
-      else {
-        _photos?.add(PhotoObject(url: urls[i]));
-      }
+  void addPhotos(List<String> urls) {
+    for (String url in urls) {
+      _photos.add(PhotoObject(url: url, createdAt: DateTime.now()));
     }
   }
 
-  Future<List<PhotoObject>?> getPhotos() async {
+  Future<List<PhotoObject>> getPhotos() async {
     return _photos;
   }
 }

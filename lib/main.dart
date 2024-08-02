@@ -20,7 +20,7 @@ void main() async {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => PhotoController()),
-        ChangeNotifierProvider(create: (_) => themeController), // Добавляем ThemeController
+        ChangeNotifierProvider(create: (_) => themeController),
       ],
       child: MyApp(),
     ),

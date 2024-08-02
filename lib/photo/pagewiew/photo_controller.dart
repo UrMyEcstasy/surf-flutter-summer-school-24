@@ -1,18 +1,22 @@
-import 'package:flutter/material.dart';
-import 'photo_repository.dart';
-import 'photo_object.dart';
-import 'package:surf_flutter_summer_school_24/photo/request/photo_request.dart';
+import 'package:flutter/foundation.dart';
+import '../request/photo_request.dart';
+import '../pagewiew/photo_object.dart';
+import '../pagewiew/photo_repository.dart';
 
-class PhotoController with ChangeNotifier {
+class PhotoController extends ChangeNotifier {
   List<PhotoObject>? photos;
 
-  Future<void> loadPhotos() async {
+  PhotoController() {
+    _loadPhotos();
+  }
+
+  Future<void> _loadPhotos() async {
+    await fillRepository();
     photos = await PhotoRepository().getPhotos();
     notifyListeners();
   }
-
   Future<void> uploadImage() async {
     await uploadImageToYandexCloud();
-    await loadPhotos();
+    await _loadPhotos();
   }
 }

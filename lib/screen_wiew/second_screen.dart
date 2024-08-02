@@ -1,121 +1,66 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
+import '../photo/pagewiew/photo_controller.dart';
 
-const List<String> workersCats = [
-
-  ];
-
-class SecondScreen extends StatefulWidget {
+class SecondScreen extends StatelessWidget {
   final int initialIndex;
 
-  const SecondScreen({super.key, required this.initialIndex});
-
-  @override
-  State<SecondScreen> createState() => _SecondScreenState();
-}
-
-class _SecondScreenState extends State<SecondScreen> {
-  static const _defaultAnimDuration = Duration(milliseconds: 300);
-
-  late int currentPage;
-  late final PageController _pageController;
-
-  @override
-  void initState() {
-    currentPage = widget.initialIndex;
-    _pageController = PageController(
-      initialPage: currentPage,
-      viewportFraction: 0.8,
-    );
-    _pageController.addListener(_onPageChanged);
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    _pageController
-      ..removeListener(_onPageChanged)
-      ..dispose();
-    super.dispose();
-  }
-
-  void _onPageChanged() {
-    final prevPage = currentPage;
-    currentPage = _pageController.page?.round() ?? currentPage;
-    if (prevPage != currentPage) setState(() {});
-  }
+  const SecondScreen({required this.initialIndex, Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    String currentDate = DateFormat.yMMMMd().format(DateTime.now());
-    final theme = Theme.of(context);
+    final photoController = Provider.of<PhotoController>(context);
+    final photos = photoController.photos;
+
+    if (photos == null || photos.isEmpty) {
+      return Scaffold(
+        appBar: AppBar(
+          title: Text('No photos'),
+        ),
+        body: Center(
+          child: Text('No photos available'),
+        ),
+      );
+    }
+
+    final PageController pageController = PageController(initialPage: initialIndex);
 
     return Scaffold(
       appBar: AppBar(
-        leading: BackButton(
-          onPressed: () {
-            Navigator.pop(context);
-          },
+        title: Text(
+          photos[initialIndex].createdAt != null
+              ? DateFormat('dd.MM.yyyy').format(photos[initialIndex].createdAt!)
+              : 'No date',
         ),
-        title: Text(currentDate),
-        centerTitle: true,
-        backgroundColor: theme.appBarTheme.backgroundColor,
-        actions: [
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Text(
-              '${currentPage + 1}/${workersCats.length}',
-              style: const TextStyle(color: Colors.black),
-            ),
-          ),
-        ],
       ),
       body: PageView.builder(
-        controller: _pageController,
-        itemCount: workersCats.length,
-        itemBuilder: (_, i) => Center(
-          child: AnimatedScale(
-            duration: const Duration(milliseconds: 300),
-            scale: currentPage == i ? 1 : 0.85,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10),
-              child: GestureDetector(
-                onTap: () => _pageController.animateToPage(
-                  i,
-                  duration: _defaultAnimDuration,
-                  curve: Curves.easeIn,
+        controller: pageController,
+        itemCount: photos.length,
+        itemBuilder: (context, index) {
+          return Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Expanded(
+                child: Container(
+                  margin: EdgeInsets.symmetric(horizontal: 20.0),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    image: DecorationImage(
+                      image: NetworkImage(photos[index].url),
+                      fit: BoxFit.cover,
+                    ),
+                  ),
                 ),
-                child: _PageViewItem(image: workersCats[i]),
               ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _PageViewItem extends StatelessWidget {
-  final String image;
-
-  const _PageViewItem({
-    required this.image,
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(20.0),
-      child: Container(
-        height: 600,
-        width: 350,
-        decoration: BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage(image),
-            fit: BoxFit.cover,
-          ),
-        ),
+              SizedBox(height: 20),
+              Text(
+                '${index + 1} / ${photos.length}', // Отображение позиции изображения среди всех
+                style: TextStyle(fontSize: 16),
+              ),
+            ],
+          );
+        },
       ),
     );
   }

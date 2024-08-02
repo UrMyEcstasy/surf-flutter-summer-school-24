@@ -9,12 +9,9 @@ import 'package:surf_flutter_summer_school_24/photo/pagewiew/photo_repository.da
 const token = 'y0_AgAAAABjio2uAADLWwAAAAELposoAAA-lxErBH9EurwONGIN7REkRLxcQA';
 
 Future<void> uploadImageToYandexCloud() async {
-  // Получаем изображение
   final picker = ImagePicker();
   final imageFromGallery = await picker.pickImage(source: ImageSource.gallery);
   if (imageFromGallery == null) return;
-
-  // ### Получаем ссылку для загрузки
 
   final name = imageFromGallery.name;
 
@@ -35,23 +32,20 @@ Future<void> uploadImageToYandexCloud() async {
 
   final body = response.body;
   final json = jsonDecode(body);
-  json as Map<String, dynamic>;
   final linkToUpload = json['href'] as String;
-
-  // ### Загружаем файл на сервер
 
   final dio = Dio();
   final file = File(imageFromGallery.path);
   final formData = FormData.fromMap({
     'file': await MultipartFile.fromFile(file.path),
   });
-  dio.put(linkToUpload, data: formData);
+  await dio.put(linkToUpload, data: formData);
 }
 
 Future<void> fillRepository() async {
   final uri = Uri.https(
-      'cloud-api.yandex.net',
-      'v1/disk/resources/files'
+    'cloud-api.yandex.net',
+    'v1/disk/resources/files',
   );
 
   final response = await http.get(
@@ -61,11 +55,11 @@ Future<void> fillRepository() async {
     },
   );
 
-  Map<String, dynamic> map = jsonDecode(response.body);
-  List<dynamic> mapItems = map['items'];
+  final map = jsonDecode(response.body) as Map<String, dynamic>;
+  final mapItems = map['items'] as List<dynamic>;
   mapItems.removeWhere((element) => element['media_type'] != 'image');
-  List<String> files = mapItems.map((elemement) => elemement['file'] as String).toList();
+  final files = mapItems.map((element) => element['file'] as String).toList();
 
-  PhotoRepository repository = PhotoRepository();
+  final repository = PhotoRepository();
   repository.addPhotos(files);
 }
